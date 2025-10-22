@@ -276,12 +276,36 @@ For deployment on a VPS (DigitalOcean, AWS EC2, Linode, etc.):
 - [ ] Enable CORS with specific origins (not `*`)
 - [ ] Use HTTPS (SSL/TLS certificates)
 - [ ] Set secure cookie options
-- [ ] Implement rate limiting
+- [ ] Implement rate limiting on API endpoints
 - [ ] Keep dependencies updated
 - [ ] Use MongoDB Atlas with IP whitelisting
 - [ ] Enable MongoDB authentication
 - [ ] Use strong JWT secret key
 - [ ] Disable unnecessary API endpoints
+- [ ] Add security headers (helmet.js)
+- [ ] Implement input validation and sanitization
+
+**Recommended Security Enhancements:**
+
+To add rate limiting to your API endpoints, install and configure express-rate-limit:
+
+```bash
+cd backend
+npm install express-rate-limit
+```
+
+Then in `backend/app.js`, add before your routes:
+
+```javascript
+const rateLimit = require('express-rate-limit');
+
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100 // limit each IP to 100 requests per windowMs
+});
+
+app.use('/api/', limiter);
+```
 
 ### Performance Optimization:
 
