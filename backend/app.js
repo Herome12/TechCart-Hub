@@ -27,7 +27,24 @@ app.use("/api/v1",payment)
 
 app.use("/api/v1",order)
 
+// Health check endpoint
+app.get('/health', (req, res) => {
+    res.status(200).json({
+        status: 'OK',
+        message: 'Server is running',
+        timestamp: new Date().toISOString()
+    });
+});
 
+// Serve static assets in production
+if (process.env.NODE_ENV === 'production') {
+    // Set static folder
+    app.use(express.static(path.join(__dirname, '../frontend/build')));
 
+    // Any route that is not an API route will serve the React app
+    app.get('*', (req, res) => {
+        res.sendFile(path.resolve(__dirname, '../frontend/build', 'index.html'));
+    });
+}
 
 module.exports = app;

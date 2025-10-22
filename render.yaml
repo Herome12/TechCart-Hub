@@ -1,0 +1,53 @@
+services:
+  # Backend API Service
+  - type: web
+    name: techcart-hub-backend
+    env: node
+    region: oregon
+    plan: free
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && npm start
+    envVars:
+      - key: PORT
+        value: 8000
+      - key: NODE_ENV
+        value: production
+      - key: database_url
+        sync: false
+      - key: JWTkey
+        sync: false
+      - key: JWT_expire
+        value: 5d
+      - key: SMPT_MAIL
+        sync: false
+      - key: SMPT_PASSWORD
+        sync: false
+      - key: SMPT_SERVICE
+        value: gmail
+      - key: SMPT_HOST
+        value: smtp.gmail.com
+      - key: SMPT_PORT
+        value: 465
+      - key: cloud_name
+        sync: false
+      - key: api_key
+        sync: false
+      - key: api_secret
+        sync: false
+      - key: stripe_key
+        sync: false
+      - key: stripe_secret_key
+        sync: false
+
+  # Frontend Service
+  - type: web
+    name: techcart-hub-frontend
+    env: node
+    region: oregon
+    plan: free
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: frontend/build
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
