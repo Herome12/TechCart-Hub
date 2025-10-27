@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:latest
+    container_name: techcart-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      - MONGO_INITDB_DATABASE=Market
+    networks:
+      - techcart-network
+
+  # Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: techcart-backend
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mongodb
+    environment:
+      - PORT=8000
+      - database_url=mongodb://mongodb:27017/Market
+      - NODE_ENV=production
+    env_file:
+      - ./backend/config/config.env
+    networks:
+      - techcart-network
+    restart: unless-stopped
+
+  # Frontend Application
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: techcart-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - techcart-network
+    restart: unless-stopped
+
+volumes:
+  mongodb_data:
+    driver: local
+
+networks:
+  techcart-network:
+    driver: bridge
